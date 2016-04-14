@@ -13,6 +13,7 @@ zone "xmansion.local" {
     masters { 192.168.0.203; };
     allow-transfer { 192.168.1.203; };  # this server will accept zone transfers
     allow-update { key rndc-key; };  # anyone with the secret key can update the DNS
+    allow-update-forwarding { key rndc-key; };  # needed to allow secondary to update primary
 };
 
 # Add a reverse zone for the 192.168.0.0/24 subnet. The reverse mapping
@@ -23,4 +24,5 @@ zone "0.168.192.in-addr.arpa" {
     masters { 192.168.0.203; };
     allow-transfer { 192.168.1.203; };  # this server will accept zone transfers
     allow-update { key rndc-key; };  # anyone with the secret key can update the DNS
+    allow-update-forwarding { key rndc-key; };  # needed to allow secondary to update primary
 };

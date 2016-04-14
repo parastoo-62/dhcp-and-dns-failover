@@ -42,6 +42,17 @@ sudo nano /etc/apparmor.d/usr.sbin.named
 
 http://stackoverflow.com/q/31631891
 
+You also then need to ensure that the `dhcp` user is part of the `bind` group and the key bind folders have `rw` permissions for the group. This is so that the DHCP can update the zone information for new leases.
+
+```
+# append group to user
+sudo usermod -a -G bind dhcpd
+
+# now modify permissions
+sudo chmod -R 770 /var/cache/bind
+sudo chmod -R 770 /etc/bind/zones
+```
+
 ## Key files
 
 ### Bind DNS
