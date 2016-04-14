@@ -1,0 +1,72 @@
+# /etc/bind/zones/db.xmansion.local
+
+# This line indicates that the object we're configuring below (in this case,
+# xmansion.local) has its origin at the "." domain.  "." is the root domain
+# from which all the TLDs branch.
+$ORIGIN .
+
+# Next line defines the DNS time-to-live setting
+$TTL 604800    ; 1 week
+
+# The next set of lines are the "Start of Authority" record and define important
+# info about the domain. In my case, we're defining xmansion.local and saying
+# that dnsserver.xmansion.local is its source host, and admin@xmansion.local
+# is the domain maintainer. For the e-mail address, we use a dot instead of an @.
+# The lines after that define the zone serial number, which is used to keep track
+# of when the zone file was modified, and then some interval definitions which
+# you can leave as default.
+
+# BIND data file for local loopback interface
+$TTL    604800
+xmansion.local  IN      SOA     charles.xmansion.local. admin.xmansion.local. (
+                              3             ; Serial
+                              10800         ; Refresh (3hrs)
+                              3600          ; Retry (1hr)
+                              604800        ; Expire (1week)
+                              38400 )       ; Minimum (10hrs 40mins)
+
+# name servers - NS records
+xmansion.local.         IN      NS      charles.xmansion.local.
+xmansion.local.         IN      NS      eric.xmansion.local.
+
+# name servers - A records
+charles                 IN      NS      192.168.0.203
+eric                    IN      NS      192.168.0.204
+
+# ...and finally "MX Records" so that e-mail for the domain's e-mail addresses
+# goes to the right place. Since my domain is registred through Google Apps,
+# this info was all provided by Google.
+        #MX  10 aspmx.l.google.com.
+        #MX  20 alt1.aspmx.l.google.com.
+        #MX  20 alt2.aspmx.l.google.com.
+        #MX  30 aspmx2.googlemail.com.
+        #MX  30 aspmx3.googlemail.com.
+        #MX  30 aspmx4.googlemail.com.
+        #MX  30 aspmx5.googlemail.com.
+
+# Now we're ready to begin adding hosts, but first we need another origin
+# statement to indicate that the hosts added below originate not from ".", like
+# the domain itself; rather, they originate from "xmansion.local".
+#
+$ORIGIN xmansion.local.
+#
+# Again, NOTE THE TRAILING PERIOD.
+# Now we add A records for the non-DHCP hosts in the domain:
+
+# General
+# @ = requests for root (i.e. xmansion.local)
+# www = requests for website (i.e. www.xmansion.local)
+
+# Routing
+router      A     192.168.0.1  ; ISP router
+
+# Storage
+freenas     A     192.168.0.2  ; mancave SAN
+homenas     A     192.168.0.3  ; NAS failover and backups
+
+# Infrastructure
+manswitch   A     192.168.0.200  ; managed switch in mancave
+cerebro     A     192.168.0.201  ; domain controller (AD)
+esxi        A     192.168.0.202  ; ESXi VM host
+charles     A     192.168.0.203  ; primary nameserver and dhcp
+eric        A     192.168.0.204  ; secondary nameserver and dhcp

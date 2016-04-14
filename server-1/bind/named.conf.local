@@ -1,0 +1,24 @@
+# /etc/bind/named.conf.local
+
+# `Include` the local cryptographic key which the DHS and DHCP servers both
+# have access to for dynamic updating of DNS (i.e. DHCP updates the name
+# servers when it hands out a new lease)
+# include "/etc/bind/rndc.key";
+# ^^ This isn't needed as we've already `included` through named.conf.options
+
+# Add a forward zone for xmansion.local
+zone "xmansion.local" {
+    type master;
+    file "/etc/bind/zones/db.xmansion.local"; # zone file path
+    allow-transfer { 192.168.0.204; }; # secondary private IP address
+    allow-update { key rndc-key; };  # anyone with the secret key can update the DNS
+};
+
+# Add a reverse zone for the 192.168.0.0/24 subnet. The reverse mapping
+# for 192.168.0 is 0.168.192
+zone "0.168.192.in-addr.arpa" {
+    type master;
+    file "/etc/bind/zones/db.0.168.192";  # 192.168.1.0/24 subnet
+    allow-transfer { 192.168.0.204; }; # secondary private IP address
+    allow-update { key rndc-key; };  # anyone with the secret key can update the DNS
+};

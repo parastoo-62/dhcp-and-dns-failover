@@ -1,0 +1,37 @@
+# /etc/bind/zones/db.0.168.192
+#
+# BIND reverse data file for local loopback interface
+# Again, we have an origin record and a TTL entry...
+$ORIGIN .
+$TTL    604800 ; 1 week
+0.168.192.in-addr.arpa  IN  SOA  charles.xmansion.local. admin.xmansion.local. (
+                              2             ; Serial
+                              10800         ; Refresh (3hrs)
+                              3600          ; Retry (1hr)
+                              604800        ; Expire (1week)
+                              38400 )       ; Minimum (10hrs 40mins)
+
+# name servers - NS records
+        IN      NS      charles.xmansion.local.
+        IN      NS      eric.xmansion.local.
+
+# Just like forward, we now set our origin away from "." to the actual domain name,
+# which is "0.168.192.in-addr-arpa", and then we add records. However, this time,
+# we're adding "PTR records", or pointer records.
+# $ORIGIN Sets the domain name that will be appended to any unqualified records.
+$ORIGIN 0.168.192.in-addr.arpa.
+
+# PTR records
+# Routing
+21              PTR     router.xmansion.local.    ; 192.168.0.1
+
+# Storage
+22              PTR     freenas.xmansion.local.   ; 192.168.0.2
+23              PTR     homenas.xmansion.local.   ; 192.168.0.3
+
+# Infrastructure
+24              PTR     manswitch.xmansion.local. ; 192.168.0.200
+25              PTR     cerebro.xmansion.local.   ; 192.168.0.201
+26              PTR     esxi.xmansion.local.      ; 192.168.0.202
+27              PTR     charles.xmansion.local.   ; 192.168.1.203
+28              PTR     eric.xmansion.local.      ; 192.168.1.204
